@@ -1,0 +1,6 @@
+.e-display-section-hidden,
+.e-display-hidden-outline,
+.e-display-hidden {
+    outline: 1px solid #e52600 !important;
+    outline-offset: -1px;
+}

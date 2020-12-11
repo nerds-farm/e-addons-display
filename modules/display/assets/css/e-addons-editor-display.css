@@ -1,0 +1,45 @@
+
+/******************************************************************************/
+/* HIDE */
+.elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-e_display a::before {
+    content: "\f6e2";
+    font-family: FontAwesome, "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+.e-display-section-hidden,
+.e-display-hidden-outline,
+.e-display-hidden {
+    outline: 1px solid #e52600 !important;
+    outline-offset: -1px;
+}
+.elementor-control.elementor-control-e_display_repeater.elementor-control-type-repeater .elementor-repeater-row-controls {
+    padding-top: 0;
+}
+
+.elementor-control.elementor-control-e_display_dynamic_tag .elementor-control-media .elementor-aspect-ratio-219 .elementor-fit-aspect-ratio {
+    padding-bottom: 25px;
+}
+.elementor-control.elementor-control-e_display_dynamic_tag .elementor-control-media .elementor-control-media-upload-button {
+    display: none;
+}
+.elementor-control.elementor-control-e_display_dynamic_tag .elementor-control-media .elementor-control-media__content:not(:hover) .elementor-control-media__tools {
+    bottom: 0;
+}
+.elementor-control.elementor-control-e_display_dynamic_tag .elementor-control-media .elementor-control-media__tool {
+    display: none;
+}
+.elementor-control.elementor-control-e_display_dynamic_tag .elementor-control-media .elementor-control-dynamic-switcher {
+    width: 100%;
+}
+
+/******************************************************************************/
+.elementor-panel #elementor-panel-page-editor .elementor-panel-navigation {
+    display: flex;
+}
+.elementor-panel #elementor-panel-page-editor .elementor-panel-navigation .elementor-panel-navigation-tab {
+    flex-basis: 100%;
+}
+.elementor-panel #elementor-panel-page-editor .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-e_display {
+    order: 5;
+}
