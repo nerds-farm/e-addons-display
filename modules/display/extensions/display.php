@@ -16,6 +16,7 @@ if (!defined('ABSPATH'))
  */
 class Display extends Base_Extension {
     
+    public $common = true;
     public $common_sections_actions = array(
         'widget' => array(
             'element' => 'widget',
@@ -62,18 +63,6 @@ class Display extends Base_Extension {
         
         add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_editor_assets']);
         add_action('elementor/preview/enqueue_styles', [$this, 'enqueue_preview_assets']);
-
-        /*foreach ($this->common_sections_actions as $common_sections_action) {
-            $el_type = $common_sections_action['element'];
-            add_action('elementor/element/' . $el_type . '/e_section_' . $this->get_name() . '_advanced/before_section_end', function($element, $args) {
-                $args['section'] = 'advanced';
-                $this->add_controls($element, $args);
-            }, 10, 2);
-            add_action('elementor/element/' . $el_type . '/e_section_' . $this->get_name() . '_fallback/before_section_end', function($element, $args) {
-                $args['section'] = 'fallback';
-                $this->add_controls($element, $args);
-            }, 10, 2);
-        }*/
         
         add_action('elementor/element/before_section_end', function($element, $section_id, $args) {
             if ($section_id == 'e_section_' . $this->get_name() . '_advanced') {

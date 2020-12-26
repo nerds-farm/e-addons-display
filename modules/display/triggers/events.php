@@ -129,10 +129,10 @@ class Events extends Base_Trigger {
 
     public function print_trigger_scripts($element, $repeater_settings = array()) {
         if (!empty($repeater_settings['e_display_repeater'])) {
-            foreach ($repeater_settings['e_display_repeater'] as $settings) {
-                //echo '<pre>';var_dump($settings);echo '</pre>';
+            foreach ($repeater_settings['e_display_repeater'] as $settings) {                
+                //echo '<pre>';var_dump($settings);echo '</pre>'; die();
                 if (!empty($settings['e_display_click'])) {
-
+                    $element_id = $this->get_element_id($element);
                     switch ($settings['e_display_click_show']) {
                         case 'slide':
                             $jFunction = 'slideDown';
@@ -177,7 +177,7 @@ class Events extends Base_Trigger {
                                             jQuery('<?php echo $settings['e_display_click_other']; ?>').not('.elementor-element-<?php echo $element->get_id(); ?>').<?php echo $jFunctionToggle; ?>(<?php echo ($settings['e_display_click_show']) ? '400, function() {' : ');'; ?>
                     <?php } ?>
                                 //console.log('fine <?php echo $settings['e_display_click_other']; ?> fadeout');
-                                jQuery('.elementor-element-<?php echo $element->get_id(); ?>')<?php echo ($settings['e_display_click_show']) ? '.delay(400)' : ''; ?>.<?php echo $jFunction; ?>();
+                                jQuery('<?php echo $element_id; ?>')<?php echo ($settings['e_display_click_show']) ? '.delay(400)' : ''; ?>.<?php echo $jFunction; ?>();
                                 //console.log(jQuery(this).attr('href'));
                     <?php
                     if ($settings['e_display_click_other'] && $settings['e_display_click_show']) {
@@ -193,18 +193,19 @@ class Events extends Base_Trigger {
                     <?php
                 }
                 if (!empty($settings['e_display_load'])) {
+                    $element_id = $this->get_element_id($element);
                     if ($settings['e_display_load_show']) {
                         $jFunctionToggle = $settings['e_display_load_show'] . 'Toggle';
                     } else {
                         $jFunctionToggle = 'toggle';
-                    }
+                    }                                       
                     ?>
                     <script>
                         jQuery(document).ready(function () {
                             //alert('<?php echo $jFunctionToggle; ?>');
                             jQuery(window).on('load', function () {
                                 setTimeout(function () {
-                                    jQuery('.elementor-element-<?php echo $element->get_id(); ?>').<?php echo $jFunctionToggle; ?>();
+                                    jQuery('<?php echo $element_id; ?>').<?php echo $jFunctionToggle; ?>();
                                 }, <?php echo $settings['e_display_load_delay'] ? $settings['e_display_load_delay'] : '0'; ?>);
                             });
                         });
@@ -213,6 +214,22 @@ class Events extends Base_Trigger {
                 }
             }
         }
+    }
+    
+    public function get_element_id($element) {
+        $element_settings = $element->get_settings_for_display();
+        $element_id = '.elementor-element-'.$element->get_id();
+        if (!empty($element_settings['css_classes'])) {
+            $css_classes = trim($element_settings['css_classes']);
+            if ($css_classes) {
+                $css_classes = str_replace(' ', '.', $css_classes);
+                $element_id .= '.'.$css_classes;
+            }
+        }
+        if (!empty($element_settings['_element_id'])) {
+            $element_id .= '#'.$element_settings['_element_id'];
+        }
+        return $element_id;
     }
 
 }
