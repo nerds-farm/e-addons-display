@@ -83,7 +83,14 @@ function e_menu_list_item_toggle(cid) {
 
     // update text
     var settings = elementorFrontend.config.elements.data[cid].attributes;
-    var text = (settings['e_display_mode'] == 'none') ? 'Show' : 'Hide';
+    var icon = menu_item.find('.elementor-context-menu-list__item__icon');
+    if (settings['e_display_mode'] == 'none') {
+        var text =  'Show';
+        icon.css('color', '#e52600');
+    } else {
+        var text = 'Hide';
+        icon.css('color', '');
+    }    
     menu_item.find('.elementor-context-menu-list__item__title').text(text + ' in frontend');
 
     return true;
@@ -99,7 +106,14 @@ function e_navigator_element_toggle(cid) {
 }
 
 function e_panel_element_toggle(value, cid) {
-    if (e_model_cid == cid) {
+    var selectedElement = elementor.getCurrentElement();
+    //console.log(selectedElement);
+    if (selectedElement) {
+        var current_cid = selectedElement.model.cid;
+    } else {
+        var current_cid = e_model_cid;
+    }
+    if (current_cid == cid) {
         if (jQuery('.elementor-control-e_display_mode').is(':visible')) {
             jQuery('select[data-setting=e_display_mode]').val(value);
             jQuery('select[data-setting=e_display_mode]').change();
@@ -209,7 +223,13 @@ jQuery(document).ready(function () {
 
     jQuery(document).on('change', 'select[data-setting=e_display_mode]', function () {
         //var cid = jQuery(this).attr('id').split('-').pop();
-        var cid = e_model_cid;
+        var selectedElement = elementor.getCurrentElement();
+        //console.log(selectedElement);
+        if (selectedElement) {
+            var cid = selectedElement.model.cid;
+        } else {
+            var cid = e_model_cid;
+        }
         //console.log('e display settings '+cid);
         e_display_toggle(cid, false);
         e_addons_display();

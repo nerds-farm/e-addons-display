@@ -4,7 +4,7 @@ Donate link: https://e-addons.com/donate/
 Tags: elementor, addons, extension, dynamic, template, display, visibility, hide, hidden
 Requires at least: 5.0
 Tested up to: 5.5.1
-Stable tag: 1.1
+Stable tag: 1.2
 Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -17,6 +17,10 @@ The Display extension shown as a ghost, lets you display elements based on logic
 You can combine multiple triggers in or/and mode and thus define whether to show your element or not.
 
 == Changelog ==
+
+= 1.2 =
+* Update: Icon color in Context Menu
+* Update: Set Common Sections
 
 = 1.1 =
 * Fix: PRO Form Repater bug
