@@ -2,9 +2,9 @@
 /******************************************************************************/
 /* HIDE */
 .elementor-panel .elementor-panel-navigation .elementor-panel-navigation-tab.elementor-tab-control-e_display a::before {
-    content: "\f6e2";
-    font-family: FontAwesome, "Font Awesome 5 Free";
-    font-weight: 900;
+    content: '\e81f'; /*"\f6e2";*/
+    font-family: eadd; /*FontAwesome, "Font Awesome 5 Free";*/
+    /*font-weight: 900;*/
 }
 
 .e-display-section-hidden,

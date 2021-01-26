@@ -21,7 +21,7 @@ class Woocommerce extends Base_Trigger {
                     [
                         'label' => __('Product in Cart', 'elementor'),
                         'type' => 'e-query',
-                        'placeholder' => __('Product Name', 'elementor'),
+                        'placeholder' => __('Search Product', 'elementor'),
                         'label_block' => true,
                         'query_type' => 'posts',
                         'object_type' => 'product',
@@ -34,13 +34,35 @@ class Woocommerce extends Base_Trigger {
                     [
                         'label' => __('Purchased Product', 'elementor'),
                         'type' => 'e-query',
-                        'placeholder' => __('Product Name', 'elementor'),
+                        'placeholder' => __('Search Product', 'elementor'),
                         'label_block' => true,
                         'query_type' => 'posts',
                         'object_type' => 'product',
                         'separator' => 'before',
                     ]
             );
+            
+            $element->add_control(
+                    'e_display_woo_cart_amount',
+                    [
+                        'label' => __('Cart Total', 'elementor'),
+                        'type' => Controls_Manager::NUMBER,
+                        'separator' => 'before',
+                        'description' => __('Total amount >= this value', 'elementor'),
+                    ]
+            );
+            /*$element->add_control(
+                    'e_display_woo_cart_amount_compare',
+                    [
+                        'label' => __('Cart Total Compare', 'elementor'),
+                        'type' => Controls_Manager::SELECT,
+                        'options' => $this->operator_options,
+                        'default' => 'gte',
+                        'condition' => [
+                            'e_display_woo_cart_amount!' => '',
+                        ]
+                    ]
+            );*/
 
 
             if (Utils::is_plugin_active('woocommerce-memberships')) {
@@ -78,6 +100,13 @@ class Woocommerce extends Base_Trigger {
                     );
                 }
             }
+        } else {
+            $element->add_control(
+                            'e_display_woo_no', [
+                        'label' => __('WooCommerce not enabled', 'elementor'),
+                        'type' => Controls_Manager::HEADING,
+                            ]
+                    );
         }
     }
 
@@ -110,6 +139,17 @@ class Woocommerce extends Base_Trigger {
                         }
                     }
                 }
+                
+                if (isset($settings['e_display_woo_cart_amount']) && $settings['e_display_woo_cart_amount'] != '') {
+                    $this->add_triggered('e_display_woo_cart_amount');
+                    $cart_amount = intval($settings['e_display_woo_cart_amount']);
+                    $cart_total = floatval(WC()->cart->total);
+                    //if ($this->check_condition($cart_total, $settings['e_display_woo_cart_amount_compare'], $cart_amount)) {
+                    if ($cart_total >= $cart_amount) {
+                        $this->add_conditions('e_display_woo_cart_amount');
+                    }
+                }
+                
 
                 if (Utils::is_plugin_active('woocommerce-memberships')) {
 
