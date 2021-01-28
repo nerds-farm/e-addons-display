@@ -91,61 +91,63 @@ class Display extends Base_Extension {
             //echo '<pre>';var_dump($element->get_controls('form_fields'));echo '</pre>'; die();
         }, 10, 2);
 
-        add_action("elementor/frontend/widget/before_render", [$this, '_before']);
-        add_action("elementor/frontend/widget/after_render", [$this, '_after']);
-        add_action("elementor/frontend/section/before_render", [$this, '_before']);
-        add_action("elementor/frontend/section/after_render", [$this, '_after']);
-        add_action("elementor/frontend/column/before_render", [$this, '_before']);
-        add_action("elementor/frontend/column/after_render", [$this, '_after']);
-        add_action("elementor/frontend/section/before_render", function($element) {
-            $columns = $element->get_children();
-            if (!empty($columns)) {
-                $cols_visible = count($columns);
-                $cols_hidden = 0;
-                foreach ($columns as $acol) {
-                    if ($this->is_hidden($acol)) {
-                        $fallback = $acol->get_settings('e_display_fallback');
-                        if (empty($fallback)) {
-                            $cols_visible--;
-                            $cols_hidden++;
-                        }
-                    }
-                }
-                if ($cols_hidden) {
-                    if ($cols_visible) {
-                        switch ($cols_visible) {
-                            case 10: $_column_size = 10;
-                                break;
-                            case 9: $_column_size = 11;
-                                break;
-                            case 8: $_column_size = 12;
-                                break;
-                            case 7: $_column_size = 14;
-                                break;
-                            case 6: $_column_size = 16;
-                                break;
-                            case 5: $_column_size = 20;
-                                break;
-                            case 4: $_column_size = 25;
-                                break;
-                            case 3: $_column_size = 33;
-                                break;
-                            case 2: $_column_size = 50;
-                                break;
-                            case 1: default: $_column_size = 100;
-                        }
-                        foreach ($columns as $acol) {
-                            if ($acol->set_settings('_column_size', $_column_size)) {
-                                
+        if (!Utils::is_preview()) {
+            add_action("elementor/frontend/widget/before_render", [$this, '_before']);
+            add_action("elementor/frontend/widget/after_render", [$this, '_after']);
+            add_action("elementor/frontend/section/before_render", [$this, '_before']);
+            add_action("elementor/frontend/section/after_render", [$this, '_after']);
+            add_action("elementor/frontend/column/before_render", [$this, '_before']);
+            add_action("elementor/frontend/column/after_render", [$this, '_after']);
+            add_action("elementor/frontend/section/before_render", function($element) {
+                $columns = $element->get_children();
+                if (!empty($columns)) {
+                    $cols_visible = count($columns);
+                    $cols_hidden = 0;
+                    foreach ($columns as $acol) {
+                        if ($this->is_hidden($acol)) {
+                            $fallback = $acol->get_settings('e_display_fallback');
+                            if (empty($fallback)) {
+                                $cols_visible--;
+                                $cols_hidden++;
                             }
                         }
-                    } else {
-                        $element->add_render_attribute('_wrapper', 'class', 'elementor-hidden');
-                        $element->add_render_attribute('_wrapper', 'class', 'e-display-original-content');
+                    }
+                    if ($cols_hidden) {
+                        if ($cols_visible) {
+                            switch ($cols_visible) {
+                                case 10: $_column_size = 10;
+                                    break;
+                                case 9: $_column_size = 11;
+                                    break;
+                                case 8: $_column_size = 12;
+                                    break;
+                                case 7: $_column_size = 14;
+                                    break;
+                                case 6: $_column_size = 16;
+                                    break;
+                                case 5: $_column_size = 20;
+                                    break;
+                                case 4: $_column_size = 25;
+                                    break;
+                                case 3: $_column_size = 33;
+                                    break;
+                                case 2: $_column_size = 50;
+                                    break;
+                                case 1: default: $_column_size = 100;
+                            }
+                            foreach ($columns as $acol) {
+                                if ($acol->set_settings('_column_size', $_column_size)) {
+
+                                }
+                            }
+                        } else {
+                            $element->add_render_attribute('_wrapper', 'class', 'elementor-hidden');
+                            $element->add_render_attribute('_wrapper', 'class', 'e-display-original-content');
+                        }
                     }
                 }
-            }
-        }, 10, 1);
+            }, 10, 1);
+        }
         
         /*if (!class_exists('Elementor\Widget_Common')) {
             include_once(ELEMENTOR_PATH.'includes'.DIRECTORY_SEPARATOR.'widgets'.DIRECTORY_SEPARATOR.'common.php');
@@ -216,6 +218,10 @@ class Display extends Base_Extension {
         if (!empty($settings['e_display_mode'])) {
             $hidden = $this->is_hidden($element);
             if ($hidden) {
+                if ($element->get_type() == 'widget' && empty($settings['e_display_dom'])) { 
+                    $element->add_skin(new \EAddonsDisplay\Modules\Display\Skins\Hidden($element));
+                    $element->set_settings('_skin', 'hidden');
+                }                 
                 echo WP_DEBUG ? '<!-- E-ADDONS DISPLAY NONE ' . $element->get_type() . ' (' . $element->get_id() . ')-->' : '';
                 if ($this->_ob($settings)) {
                     ob_start();
