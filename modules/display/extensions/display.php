@@ -200,6 +200,17 @@ class Display extends Base_Extension {
         }
         return false;
     }
+    
+    public function set_hidden_skin($element) {
+        if ($element->get_type() == 'widget') {
+            $element->add_skin(new \EAddonsDisplay\Modules\Display\Skins\Hidden($element));
+            $element->set_settings('_skin', 'hidden');
+        } else {
+            foreach ( $element->get_children() as $child ) {
+                $this->set_hidden_skin($child);
+            }
+        }
+    }
 
     public function _ob($settings) {
         if ($this->has_inspector()) {
@@ -218,9 +229,8 @@ class Display extends Base_Extension {
         if (!empty($settings['e_display_mode'])) {
             $hidden = $this->is_hidden($element);
             if ($hidden) {
-                if ($element->get_type() == 'widget' && empty($settings['e_display_dom'])) { 
-                    $element->add_skin(new \EAddonsDisplay\Modules\Display\Skins\Hidden($element));
-                    $element->set_settings('_skin', 'hidden');
+                if (empty($settings['e_display_dom'])) { 
+                    $this->set_hidden_skin($element);
                 }                 
                 echo WP_DEBUG ? '<!-- E-ADDONS DISPLAY NONE ' . $element->get_type() . ' (' . $element->get_id() . ')-->' : '';
                 if ($this->_ob($settings)) {
@@ -240,6 +250,7 @@ class Display extends Base_Extension {
             if ($this->is_hidden($element)) {
                 if ($this->_ob($settings)) {
                     $content = ob_get_clean();
+                    //echo $content;
                 }
                 $fallback = $this->get_fallback($settings, $element);
                 if ($fallback) {
