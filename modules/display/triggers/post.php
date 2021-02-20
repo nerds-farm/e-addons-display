@@ -261,7 +261,7 @@ class Post extends Base_Trigger {
             'type' => Controls_Manager::SELECT2,
             'options' => [
                 'is_front_page' => __('Front Page', 'elementor'),
-                'is_home' => __('Home', 'elementor'),
+                'is_home' => __('Home (Blog)', 'elementor'),
                 'is_404' => __('404 Not Found', 'elementor'),
                 'is_single' => __('Single', 'elementor'),
                 'is_page' => __('Page', 'elementor'),

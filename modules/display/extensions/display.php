@@ -91,7 +91,14 @@ class Display extends Base_Extension {
             //echo '<pre>';var_dump($element->get_controls('form_fields'));echo '</pre>'; die();
         }, 10, 2);
 
-        if (!Utils::is_preview()) {
+        //if (!Utils::is_preview()) {
+            
+            /*
+            add_filter( 'elementor/frontend/section/should_render', [$this, 'should_render'], 10, 3);
+            add_filter( 'elementor/frontend/column/should_render', [$this, 'should_render'], 10, 3);
+            add_filter( 'elementor/frontend/widget/should_render', [$this, 'should_render'], 10, 3);
+            */
+            
             add_action("elementor/frontend/widget/before_render", [$this, '_before']);
             add_action("elementor/frontend/widget/after_render", [$this, '_after']);
             add_action("elementor/frontend/section/before_render", [$this, '_before']);
@@ -147,7 +154,7 @@ class Display extends Base_Extension {
                     }
                 }
             }, 10, 1);
-        }
+        //}
         
         /*if (!class_exists('Elementor\Widget_Common')) {
             include_once(ELEMENTOR_PATH.'includes'.DIRECTORY_SEPARATOR.'widgets'.DIRECTORY_SEPARATOR.'common.php');
@@ -360,11 +367,11 @@ class Display extends Base_Extension {
                         'type' => \Elementor\Controls_Manager::REPEATER,
                         'fields' => $repeater->get_controls(),
                         'title_field' => '{{{ e_display_trigger }}}',
-                        'default' => array(
+                        /*'default' => array(
                             array(
                                 'e_display_trigger' => '',
                             )
-                        ),
+                        ),*/
                         'description' => __('If empty the Element will remain Hidden/Shown', 'e-addons'),
                         'condition' => [
                             'e_display_mode!' => ['', 'none'],
@@ -601,6 +608,15 @@ class Display extends Base_Extension {
             return $fallback_content;
         }
         return '';
+    }
+    
+    public function should_render($should_render, $element) {        
+        if (!$element->get_settings('e_display_dom')) {
+            if ($this->is_hidden()) {
+                return false;
+            }
+        }
+        return $should_render;
     }
 
     public function is_hidden($element = null, $why = false) {

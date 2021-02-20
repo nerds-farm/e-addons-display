@@ -45,10 +45,20 @@ class Woocommerce extends Base_Trigger {
             $element->add_control(
                     'e_display_woo_cart_amount',
                     [
-                        'label' => __('Cart Total', 'elementor'),
+                        'label' => __('Cart Min Total', 'elementor'),
                         'type' => Controls_Manager::NUMBER,
+                        'step' => 0.01,
                         'separator' => 'before',
                         'description' => __('Total amount >= this value', 'elementor'),
+                    ]
+            );
+            $element->add_control(
+                    'e_display_woo_max_cart_amount',
+                    [
+                        'label' => __('Cart Max Total', 'elementor'),
+                        'type' => Controls_Manager::NUMBER,
+                        'step' => 0.01,
+                        'description' => __('Total amount <= this value', 'elementor'),
                     ]
             );
             /*$element->add_control(
@@ -140,17 +150,35 @@ class Woocommerce extends Base_Trigger {
                     }
                 }
                 
-                if (isset($settings['e_display_woo_cart_amount']) && $settings['e_display_woo_cart_amount'] != '') {
-                    $this->add_triggered('e_display_woo_cart_amount');
-                    $cart_amount = intval($settings['e_display_woo_cart_amount']);
+                if (isset($settings['e_display_woo_cart_amount']) && $settings['e_display_woo_cart_amount'] != '' 
+                        && isset($settings['e_display_woo_max_cart_amount']) && $settings['e_display_woo_max_cart_amount'] != '') {
                     $cart_total = floatval(WC()->cart->total);
-                    //if ($this->check_condition($cart_total, $settings['e_display_woo_cart_amount_compare'], $cart_amount)) {
-                    if ($cart_total >= $cart_amount) {
+                    $this->add_triggered('e_display_woo_cart_amount');
+                    $cart_amount = floatval($settings['e_display_woo_cart_amount']);
+                    $cart_max_amount = floatval($settings['e_display_woo_max_cart_amount']);                    
+                    if ($cart_total >= $cart_amount && $cart_total <= $cart_max_amount) {
                         $this->add_conditions('e_display_woo_cart_amount');
                     }
+                } else {
+                    $cart_total = floatval(WC()->cart->total);
+                    if (isset($settings['e_display_woo_cart_amount']) && $settings['e_display_woo_cart_amount'] != '') {
+                        $this->add_triggered('e_display_woo_cart_amount');
+                        $cart_amount = floatval($settings['e_display_woo_cart_amount']);
+                        //if ($this->check_condition($cart_total, $settings['e_display_woo_cart_amount_compare'], $cart_amount)) {
+                        if ($cart_total >= $cart_amount) {
+                            $this->add_conditions('e_display_woo_cart_amount');
+                        }
+                    }
+                    if (isset($settings['e_display_woo_max_cart_amount']) && $settings['e_display_woo_max_cart_amount'] != '') {
+                        $this->add_triggered('e_display_woo_max_cart_amount');
+                        $cart_amount = floatval($settings['e_display_woo_max_cart_amount']);                    
+                        if ($cart_total <= $cart_amount) {
+                            $this->add_conditions('e_display_woo_max_cart_amount');
+                        }
+                    }
                 }
-                
 
+                
                 if (Utils::is_plugin_active('woocommerce-memberships')) {
 
                     if ($settings['e_display_woo_membership_post']) {
