@@ -61,20 +61,7 @@ class Woocommerce extends Base_Trigger {
                         'description' => __('Total amount <= this value', 'elementor'),
                     ]
             );
-            /*$element->add_control(
-                    'e_display_woo_cart_amount_compare',
-                    [
-                        'label' => __('Cart Total Compare', 'elementor'),
-                        'type' => Controls_Manager::SELECT,
-                        'options' => $this->operator_options,
-                        'default' => 'gte',
-                        'condition' => [
-                            'e_display_woo_cart_amount!' => '',
-                        ]
-                    ]
-            );*/
-
-
+            
             if (Utils::is_plugin_active('woocommerce-memberships')) {
                 $plans = get_posts([
                     'post_type' => 'wc_membership_plan',
