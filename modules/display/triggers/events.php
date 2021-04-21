@@ -3,6 +3,7 @@
 namespace EAddonsDisplay\Modules\Display\Triggers;
 
 use EAddonsForElementor\Core\Utils;
+use EAddonsForElementor\Core\Managers\Assets;
 use EAddonsForElementor\Base\Base_Trigger;
 use Elementor\Controls_Manager;
 
@@ -12,6 +13,8 @@ use Elementor\Controls_Manager;
  * @author fra
  */
 class Events extends Base_Trigger {
+
+    public static $enqueued = [];
 
     public function get_title() {
         return __('Frontend Events', 'e-addons');
@@ -129,105 +132,119 @@ class Events extends Base_Trigger {
 
     public function print_trigger_scripts($element, $repeater_settings = array()) {
         if (!empty($repeater_settings['e_display_repeater'])) {
-            foreach ($repeater_settings['e_display_repeater'] as $settings) {                
+            foreach ($repeater_settings['e_display_repeater'] as $settings) {
+
                 //echo '<pre>';var_dump($settings);echo '</pre>'; die();
                 if (!empty($settings['e_display_click'])) {
-                    $element_id = $this->get_element_id($element);
-                    switch ($settings['e_display_click_show']) {
-                        case 'slide':
-                            $jFunction = 'slideDown';
-                            $jFunctionHide = 'slideUp';
-                            break;
-                        case 'fade':
-                            $jFunction = 'fadeIn';
-                            $jFunctionHide = 'fadeOut';
-                            break;
-                        default:
-                            $jFunction = 'show';
-                            $jFunctionHide = 'hide';
-                    }
-                    $show = true;
-                    if ($repeater_settings['e_display_mode'] == 'hide') {
-                        $show = false;
-                        $jFunction = $jFunctionHide;
-                    }
+                    if (!in_array($element->get_id() . '_click', self::$enqueued)) {
+                        $jkey = $element->get_id() . '_click';
+                        $element_id = $this->get_element_id($element);
+                        switch ($settings['e_display_click_show']) {
+                            case 'slide':
+                                $jFunction = 'slideDown';
+                                $jFunctionHide = 'slideUp';
+                                break;
+                            case 'fade':
+                                $jFunction = 'fadeIn';
+                                $jFunctionHide = 'fadeOut';
+                                break;
+                            default:
+                                $jFunction = 'show';
+                                $jFunctionHide = 'hide';
+                        }
+                        $show = true;
+                        if ($repeater_settings['e_display_mode'] == 'hide') {
+                            $show = false;
+                            $jFunction = $jFunctionHide;
+                        }
 
-                    if ($settings['e_display_click_toggle']) {
-                        if ($settings['e_display_click_show']) {
-                            $jFunctionToggle = $settings['e_display_click_show'] . 'Toggle';
+                        if ($settings['e_display_click_toggle']) {
+                            if ($settings['e_display_click_show']) {
+                                $jFunctionToggle = $settings['e_display_click_show'] . 'Toggle';
+                            } else {
+                                $jFunctionToggle = 'toggle';
+                            }
+                            $jFunction = $jFunctionToggle;
+                        } else {
+                            if ($show) {
+                                $jFunctionToggle = $jFunctionHide;
+                            } else {
+                                $jFunctionToggle = $jFunction;
+                            }
+                        }
+                        ob_start();
+                        ?>
+                        <script>
+                            jQuery(document).ready(function () {
+                                jQuery('<?php echo $settings['e_display_click']; ?>').on('click', function () {
+                                    //console.log('<?php echo $settings['e_display_click_other']; ?>');
+                                    //console.log('<?php echo $settings['e_display_click_show']; ?>');
+                        <?php if ($settings['e_display_click_other']) { ?>
+                                        jQuery('<?php echo $settings['e_display_click_other']; ?>').stop();
+                                        jQuery('<?php echo $settings['e_display_click_other']; ?>').not('.elementor-element-<?php echo $element->get_id(); ?>').<?php echo $jFunctionToggle; ?>(<?php echo ($settings['e_display_click_show']) ? '400, function() {' : ');'; ?>
+                        <?php } ?>
+                                    //console.log('fine <?php echo $settings['e_display_click_other']; ?> fadeout');
+                                    jQuery('<?php echo $element_id; ?>')<?php echo ($settings['e_display_click_show']) ? '.delay(400)' : ''; ?>.<?php echo $jFunction; ?>();
+                                    //console.log(jQuery(this).attr('href'));
+                        <?php
+                        if ($settings['e_display_click_other'] && $settings['e_display_click_show']) {
+                            echo '});';
+                        }
+                        ?>
+                                    if (jQuery(this).attr('href') == '#') {
+                                        return false;
+                                    }
+                                });
+                            });
+                        </script>
+                        <?php
+                        $js = ob_get_clean();
+                        $js = Assets::enqueue_script($jkey, $js);
+                        self::$enqueued[] = $element->get_id() . '_click';
+                    }
+                }
+                if (!empty($settings['e_display_load'])) {
+                    if (!in_array($element->get_id() . '_load', self::$enqueued)) {
+                        $jkey = $element->get_id() . '_load';
+                        $element_id = $this->get_element_id($element);
+                        if ($settings['e_display_load_show']) {
+                            $jFunctionToggle = $settings['e_display_load_show'] . 'Toggle';
                         } else {
                             $jFunctionToggle = 'toggle';
                         }
-                        $jFunction = $jFunctionToggle;
-                    } else {
-                        if ($show) {
-                            $jFunctionToggle = $jFunctionHide;
-                        } else {
-                            $jFunctionToggle = $jFunction;
-                        }
-                    }
-                    ?>
-                    <script>
-                        jQuery(document).ready(function () {
-                            jQuery('<?php echo $settings['e_display_click']; ?>').on('click', function () {
-                                //console.log('<?php echo $settings['e_display_click_other']; ?>');
-                                //console.log('<?php echo $settings['e_display_click_show']; ?>');
-                    <?php if ($settings['e_display_click_other']) { ?>
-                                    jQuery('<?php echo $settings['e_display_click_other']; ?>').stop();
-                                            jQuery('<?php echo $settings['e_display_click_other']; ?>').not('.elementor-element-<?php echo $element->get_id(); ?>').<?php echo $jFunctionToggle; ?>(<?php echo ($settings['e_display_click_show']) ? '400, function() {' : ');'; ?>
-                    <?php } ?>
-                                //console.log('fine <?php echo $settings['e_display_click_other']; ?> fadeout');
-                                jQuery('<?php echo $element_id; ?>')<?php echo ($settings['e_display_click_show']) ? '.delay(400)' : ''; ?>.<?php echo $jFunction; ?>();
-                                //console.log(jQuery(this).attr('href'));
-                    <?php
-                    if ($settings['e_display_click_other'] && $settings['e_display_click_show']) {
-                        echo '});';
-                    }
-                    ?>
-                                if (jQuery(this).attr('href') == '#') {
-                                    return false;
-                                }
-                            });
-                        });
-                    </script>
-                    <?php
-                }
-                if (!empty($settings['e_display_load'])) {
-                    $element_id = $this->get_element_id($element);
-                    if ($settings['e_display_load_show']) {
-                        $jFunctionToggle = $settings['e_display_load_show'] . 'Toggle';
-                    } else {
-                        $jFunctionToggle = 'toggle';
-                    }                                       
-                    ?>
-                    <script>
-                        jQuery(document).ready(function () {
-                            //alert('<?php echo $jFunctionToggle; ?>');
+                        ob_start();
+                        ?>
+                        <script>
                             jQuery(window).on('load', function () {
+                                //alert('<?php echo $jFunctionToggle; ?>');
                                 setTimeout(function () {
+                                    //console.log('toggle');
                                     jQuery('<?php echo $element_id; ?>').<?php echo $jFunctionToggle; ?>();
                                 }, <?php echo $settings['e_display_load_delay'] ? $settings['e_display_load_delay'] : '0'; ?>);
                             });
-                        });
-                    </script>
-                    <?php
+                        </script>
+                        <?php
+                        $js = ob_get_clean();
+                        $js = Assets::enqueue_script($jkey, $js);
+                        self::$enqueued[] = $element->get_id() . '_load';
+                    }
                 }
             }
         }
     }
-    
+
     public function get_element_id($element) {
         $element_settings = $element->get_settings_for_display();
-        $element_id = '.elementor-element-'.$element->get_id();
+        $element_id = '.elementor-element-' . $element->get_id();
         if (!empty($element_settings['css_classes'])) {
             $css_classes = trim($element_settings['css_classes']);
             if ($css_classes) {
                 $css_classes = str_replace(' ', '.', $css_classes);
-                $element_id .= '.'.$css_classes;
+                $element_id .= '.' . $css_classes;
             }
         }
         if (!empty($element_settings['_element_id'])) {
-            $element_id .= '#'.$element_settings['_element_id'];
+            $element_id .= '#' . $element_settings['_element_id'];
         }
         return $element_id;
     }

@@ -371,7 +371,7 @@ class User extends Base_Trigger {
 
             $this->add_triggered('e_display_user_field');
 
-            if (Utils::is_user_meta($settings['e_display_user_field'])) {
+            if (Utils::is_meta($settings['e_display_user_field'], 'user')) {
                 $usermeta = get_user_meta($user->ID, $settings['e_display_user_field'], true); // false for visitor
             } else {
                 $usermeta = $user->{$settings['e_display_user_field']};
