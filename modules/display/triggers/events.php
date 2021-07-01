@@ -136,8 +136,8 @@ class Events extends Base_Trigger {
 
                 //echo '<pre>';var_dump($settings);echo '</pre>'; die();
                 if (!empty($settings['e_display_click'])) {
-                    if (!in_array($element->get_id() . '_click', self::$enqueued)) {
-                        $jkey = $element->get_id() . '_click';
+                    $jkey = $element->get_id() . '_click';
+                    if (!in_array($jkey, self::$enqueued)) {                        
                         $element_id = $this->get_element_id($element);
                         switch ($settings['e_display_click_show']) {
                             case 'slide':
@@ -175,7 +175,7 @@ class Events extends Base_Trigger {
                         ob_start();
                         ?>
                         <script>
-                            jQuery(document).ready(function () {
+                            window.addEventListener('load', (event) => {
                                 jQuery('<?php echo $settings['e_display_click']; ?>').on('click', function () {
                                     //console.log('<?php echo $settings['e_display_click_other']; ?>');
                                     //console.log('<?php echo $settings['e_display_click_show']; ?>');
@@ -200,12 +200,12 @@ class Events extends Base_Trigger {
                         <?php
                         $js = ob_get_clean();
                         $js = Assets::enqueue_script($jkey, $js);
-                        self::$enqueued[] = $element->get_id() . '_click';
+                        self::$enqueued[] = $jkey;
                     }
                 }
                 if (!empty($settings['e_display_load'])) {
-                    if (!in_array($element->get_id() . '_load', self::$enqueued)) {
-                        $jkey = $element->get_id() . '_load';
+                    $jkey = $element->get_id() . '_load';
+                    if (!in_array($jkey, self::$enqueued)) {                        
                         $element_id = $this->get_element_id($element);
                         if ($settings['e_display_load_show']) {
                             $jFunctionToggle = $settings['e_display_load_show'] . 'Toggle';
@@ -215,7 +215,7 @@ class Events extends Base_Trigger {
                         ob_start();
                         ?>
                         <script>
-                            jQuery(window).on('load', function () {
+                            window.addEventListener('load', (event) => {
                                 //alert('<?php echo $jFunctionToggle; ?>');
                                 setTimeout(function () {
                                     //console.log('toggle');
@@ -226,7 +226,7 @@ class Events extends Base_Trigger {
                         <?php
                         $js = ob_get_clean();
                         $js = Assets::enqueue_script($jkey, $js);
-                        self::$enqueued[] = $element->get_id() . '_load';
+                        self::$enqueued[] = $jkey;
                     }
                 }
             }

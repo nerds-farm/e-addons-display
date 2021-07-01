@@ -44,10 +44,6 @@ class Hidden extends Base_Skin {
         $this->parent = $widget;
     }
 
-    public function register_style_sections() {
-        
-    }
-
     public function render() {
         //echo 'Hidden';
         return;

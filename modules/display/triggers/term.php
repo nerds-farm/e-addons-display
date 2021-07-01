@@ -188,19 +188,18 @@ class Term extends Base_Trigger {
             
             
             if (!empty($settings['e_display_term_field'])) {
-
                 $this->add_triggered('e_display_term_field');
-
-                $current_term = wp_get_current_term();
-                if (Utils::is_term_meta($settings['e_display_term_field'], true)) {
-                    $termmeta = get_term_meta($current_term->ID, $settings['e_display_term_field'], true); // false for visitor
-                } else {
-                    $termmeta = $current_term->{$settings['e_display_term_field']};
-                }
-                
-                $condition_result = self::check_condition($termmeta, $settings['e_display_term_field_status'], $settings['e_display_term_field_value']);
-                if ($condition_result) {
-                    $this->add_conditions('e_display_term_field');
+                $current_term = get_queried_object();
+                if (get_class($current_term) == 'WP_Term') {
+                    if (Utils::is_meta($settings['e_display_term_field'], 'term', true)) {
+                        $termmeta = get_term_meta($current_term->ID, $settings['e_display_term_field'], true); // false for visitor
+                    } else {          
+                        $termmeta = $current_term->{$settings['e_display_term_field']};
+                    }                    
+                    $condition_result = self::check_condition($termmeta, $settings['e_display_term_field_status'], $settings['e_display_term_field_value']);
+                    if ($condition_result) {
+                        $this->add_conditions('e_display_term_field');
+                    }
                 }
             }
 
