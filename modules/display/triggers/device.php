@@ -74,6 +74,7 @@ class Device extends Base_Trigger {
                 }
 
                 // browser
+                //https://developer.wordpress.org/reference/functions/user_can_richedit/
                 if (!empty($settings['e_display_browser']) && is_array($settings['e_display_browser'])) {
 
                     $this->add_triggered('e_display_browser');

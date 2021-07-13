@@ -6,7 +6,7 @@
  * Plugin Name:       e-addons DISPLAY
  * Plugin URI:        https://e-addons.com
  * Description:       Show and hide elements on your Templates according to the conditions you prefer
- * Version:           1.3.1
+ * Version:           1.3.2
  * Author:            Nerds Farm
  * Author URI:        https://nerds.farm
  * Text Domain:       e-addons-display
